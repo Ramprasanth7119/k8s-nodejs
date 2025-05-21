@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node-metrics-app'
+    static_configs:
+      - targets: ['node-metrics-service.default.svc.cluster.local:80']

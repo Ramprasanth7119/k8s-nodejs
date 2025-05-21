@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-metrics-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-metrics-app
+  template:
+    metadata:
+      labels:
+        app: node-metrics-app
+    spec:
+      containers:
+        - name: node-metrics-app
+          image: ramprasanth28/node-metrics-app:latest
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-metrics-service
+spec:
+  selector:
+    app: node-metrics-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
